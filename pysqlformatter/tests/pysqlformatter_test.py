@@ -14,8 +14,8 @@ class Test:
     def __init__(self):
         pass
     
-    def test_script_with_one_query(self):
-        msg = 'Testing script with one query'
+    def test_script_with_simple_query_as_variable(self):
+        msg = 'Testing script with simple query as variable passed to spark.sql()'
         testScript = """
 query = 'select * from t0'
 df = spark.sql(query)
@@ -28,6 +28,21 @@ FROM
     t0
 '''
 df = spark.sql(query)
+        """.strip() + '\n' # pep8
+        self.run(msg, testScript, key)
+    
+    def test_script_with_simple_query_as_argument(self):
+        msg = 'Testing script with simple query in spark.sql()'
+        testScript = """
+df = spark.sql('select * from t0')
+        """
+        key = """
+df = spark.sql('''
+SELECT
+    *
+FROM
+    t0
+''')
         """.strip() + '\n' # pep8
         self.run(msg, testScript, key)
         
