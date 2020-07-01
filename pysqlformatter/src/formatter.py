@@ -22,24 +22,26 @@ class Formatter:
         reformattedScript = ''
         for token in queryMatchTokens:
             # print('self.pointer = ' + str(self.pointer))
-            print('token.value = ' + repr(token.value))
+            # print('token.value = ' + repr(token.value))
             # print('token.start = {}, token.end = {}'.format(token.start, token.end))
             reformattedScript += pythonReformatted[self.pointer: token.start]
             reformattedQuery = api.format_query(token.value, self.hiveqlFormatter)
-            totalIndent = Formatter.get_indent(token.start, pythonReformatted)
-            # print('totalIndent = ' + repr(totalIndent))
-            reformattedQuery = Formatter.indent_query(reformattedQuery, totalIndent)
+            indentCurrLine = Formatter.get_indent(token.start, pythonReformatted)
+            indentPrevLine = Formatter.get_indent(Formatter.get_prev_line_end(token.start, pythonReformatted), pythonReformatted)
+            indent = indentCurrLine if len(indentCurrLine) > len(indentPrevLine) else indentPrevLine
+            # print('indent = ' + repr(indent))
+            reformattedQuery = Formatter.indent_query(reformattedQuery, indent)
             if not pythonReformatted[(token.start-3):token.start] in ["'''", '"""']: # handle queries quoted by '' or "" that are formatted to multiline
                 if '\n' in reformattedQuery:
                     reformattedScript = reformattedScript[:-1] + "'''\n" # remove starting ' or "
                     reformattedScript += reformattedQuery
-                    reformattedScript += '\n' + totalIndent + "'''"
+                    reformattedScript += '\n' + indent + "'''"
                     self.pointer = token.end + 1 # skip ending ' or "
                 else:
                     reformattedScript += reformattedQuery
                     self.pointer = token.end
             else:
-                reformattedScript += '\n' + reformattedQuery + '\n' + totalIndent
+                reformattedScript += '\n' + reformattedQuery + '\n' + indent
                 self.pointer = token.end
             # print('reformattedScript in loop: ' + reformattedScript)
         reformattedScript += pythonReformatted[self.pointer:]
@@ -143,6 +145,18 @@ class Formatter:
         while script[startOfLine+indent].isspace(): # find position of the first non-space character in the line
             indent += 1
         return script[startOfLine:startOfLine+indent]
+    
+    @staticmethod
+    def get_prev_line_end(pos, script):
+        '''
+        Get position of the end of the previous line.
+        '''
+        endOfPrevLine = pos
+        while endOfPrevLine > 0 and script[endOfPrevLine] != '\n':
+            endOfPrevLine -= 1
+        endOfPrevLine -= 1
+        return endOfPrevLine
+
     
     # @staticmethod
     # def get_blanks_before_query(start, script):

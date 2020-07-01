@@ -46,7 +46,7 @@ FROM
         """.strip() + '\n' # pep8
         self.run(msg, testScript, key)
     
-    def test_script_with_complex_query_as_variable(self):
+    def test_script_with_complex_query_as_variable1(self):
         msg = 'Testing script with complex query in spark.sql()'
         testScript = """
 import re
@@ -110,8 +110,69 @@ def final():
         """.strip() + '\n' # pep8
         self.run(msg, testScript, key)
 
-    def tests_script_with_complex_query_as_argument(self):
-        pass
+    def test_script_with_complex_query_as_variable2(self):
+        msg = 'Testing script with complex query in spark.sql()'
+        testScript = """
+import re
+
+def get_base(date):
+    query = '''
+select * from
+t0
+left join t1 on t0.id = t1.id
+where t1.date = '{date}'
+    '''
+    query = query.format(date=date)
+    df = spark.sql(query)
+    df.cache()
+    return df
+
+def add_columns():
+    df = spark.sql('select * from base left join t2 on base.id = t2.id')
+    return df
+
+def final():
+    columns = ['id', 'date', 'c1', 'c2']
+    df = df.select(columns)
+    return df
+        """
+        key = """
+import re
+
+
+def get_base(date):
+    query = '''
+    SELECT
+        *
+    FROM
+        t0
+        LEFT JOIN t1 ON t0.id = t1.id
+    WHERE
+        t1.date = '{date}'
+    '''
+    query = query.format(date=date)
+    df = spark.sql(query)
+    df.cache()
+    return df
+
+
+def add_columns():
+    df = spark.sql('''
+    SELECT
+        *
+    FROM
+        base
+        LEFT JOIN t2 ON base.id = t2.id
+    ''')
+    return df
+
+
+def final():
+    columns = ['id', 'date', 'c1', 'c2']
+    df = df.select(columns)
+    return df
+        """.strip() + '\n' # pep8
+        self.run(msg, testScript, key)
 
     def run(self, msg, testScript, key, formatter=Formatter()):
         logger.info(msg)
