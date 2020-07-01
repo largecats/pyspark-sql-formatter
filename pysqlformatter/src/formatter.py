@@ -16,7 +16,6 @@ class Formatter:
 
     def format(self, script):
         pythonReformatted = yapf_api.FormatCode(script, style_config=self.pythonStyle)[0]
-        # print('pythonReformatted = ' + pythonReformatted)
         queryMatchTokens = self.get_query_strings(pythonReformatted) # get all strings passed to spark.sql() in the .py script
         
         reformattedScript = ''
@@ -43,7 +42,6 @@ class Formatter:
             else:
                 reformattedScript += '\n' + reformattedQuery + '\n' + indent
                 self.pointer = token.end
-            # print('reformattedScript in loop: ' + reformattedScript)
         reformattedScript += pythonReformatted[self.pointer:]
         self.reset()
         return yapf_api.FormatCode(reformattedScript, style_config=self.pythonStyle)[0]
@@ -53,17 +51,12 @@ class Formatter:
         queryMatchTokens = []
         for match in sparkSqlMatchObjs:
             matchGroupIndex = 1
-            # print(match)
-            # print('match.groups() = ')
-            # print(match.groups())
             for m in match.groups():
                 if m:
                     matchGroup = m # first match group that is not None
                     break
                 else:
                     matchGroupIndex += 1
-            # print('matchGroup = ' + matchGroup)
-            # print(pythonReformatted[match.start(matchGroupIndex):match.end(matchGroupIndex)])
             if Formatter.is_query(matchGroup): # e.g., spark.sql('select * from t0')
                 if matchGroup.startswith("'''") or matchGroup.startswith('"""'):
                     matchTokenWithoutQuotes = Token(
@@ -82,8 +75,6 @@ class Formatter:
                 queryMatchTokens.append(matchTokenWithoutQuotes)
             else: # e.g., spark.sql(query)
                 queryMatchObj = Formatter.get_query_from_variable_name(matchGroup, pythonReformatted[:match.start(1)])
-                # print(queryMatchObj)
-                # print(queryMatchObj.groups())
                 queryMatchToken = Formatter.create_token_from_match(queryMatchObj, pythonReformatted)
                 queryMatchTokens.append(queryMatchToken)
         return queryMatchTokens
@@ -106,8 +97,6 @@ class Formatter:
     
     @staticmethod
     def get_query_from_variable_name(queryVariableName, script):
-        # print('queryVariableName = ' + queryVariableName)
-        # print('script = ' + script)
         queryRegexSingleQuotes = '{queryVariableName}\s*=\s*\'(.*?)\''.format(queryVariableName=queryVariableName)
         queryRegexDoubleQuotes = '{queryVariableName}\s*=\s*"(.*?)"'.format(queryVariableName=queryVariableName)
         queryRegexTipleSingleQuotes = '{queryVariableName}\s*=\s*\'\'\'(.*?)\'\'\''.format(queryVariableName=queryVariableName)
@@ -156,19 +145,6 @@ class Formatter:
             endOfPrevLine -= 1
         endOfPrevLine -= 1
         return endOfPrevLine
-
-    
-    # @staticmethod
-    # def get_blanks_before_query(start, script):
-    #     print('start = ' + str(start))
-    #     print('script = ' + script[:start])
-    #     while script[start] == '\n':
-    #         start += 1
-    #     firstNonBlank = start
-    #     while script[firstNonBlank].isspace():
-    #         firstNonBlank += 1
-    #     print('firstNonBlank = ' + str(firstNonBlank))
-    #     return script[start:firstNonBlank]
     
     @staticmethod
     def indent_query(query, indent):
