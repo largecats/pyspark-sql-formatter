@@ -1,7 +1,7 @@
 from __future__ import print_function # for print() in Python 2
 import re
 from yapf.yapflib import yapf_api
-from hiveqlformatter import HiveqlFormatter, Config, api
+from hiveqlformatter import Config, api
 from pysqlformatter.src.token import Token
 
 class Formatter:
@@ -11,7 +11,7 @@ class Formatter:
 
     def __init__(self, pythonStyle='pep8', hiveqlFormatterConfig=Config()):
         self.pythonStyle = pythonStyle
-        self.hiveqlFormatter = HiveqlFormatter(hiveqlFormatterConfig)
+        self.hiveqlConfig = hiveqlFormatterConfig
         self.pointer = 0 # next position to read
 
     def format(self, script):
@@ -24,7 +24,7 @@ class Formatter:
             # print('token.value = ' + repr(token.value))
             # print('token.start = {}, token.end = {}'.format(token.start, token.end))
             reformattedScript += pythonReformatted[self.pointer: token.start]
-            reformattedQuery = api.format_query(token.value, self.hiveqlFormatter)
+            reformattedQuery = api.format_query(token.value, self.hiveqlConfig)
             indentCurrLine = Formatter.get_indent(token.start, pythonReformatted)
             indentPrevLine = Formatter.get_indent(Formatter.get_prev_line_end(token.start, pythonReformatted), pythonReformatted)
             indent = indentCurrLine if len(indentCurrLine) > len(indentPrevLine) else indentPrevLine
@@ -40,11 +40,11 @@ class Formatter:
                     reformattedScript += reformattedQuery
                     self.pointer = token.end
             else:
-                reformattedScript += '\n' + reformattedQuery + '\n' + indent
+                reformattedScript += '\n' + reformattedQuery + '\n' + indent # properly format bewteen triple quotes
                 self.pointer = token.end
         reformattedScript += pythonReformatted[self.pointer:]
         self.reset()
-        return yapf_api.FormatCode(reformattedScript, style_config=self.pythonStyle)[0]
+        return reformattedScript
     
     def get_query_strings(self, pythonReformatted):
         sparkSqlMatchObjs = Formatter.get_spark_sql_args(pythonReformatted)
@@ -114,8 +114,8 @@ class Formatter:
             if m:
                 return Token(
                     value=matchObj.groups()[matchGroupIndex],
-                    start=matchObj.start(matchGroupIndex+1),
-                    end=matchObj.end(matchGroupIndex+1),
+                    start=matchObj.start(matchGroupIndex+1), # start(0) is the start of the whole match, see https://docs.python.org/3/library/re.html re.Match.start([group])
+                    end=matchObj.end(matchGroupIndex+1), # end(0) is the end of the whole match
                     indent=Formatter.get_indent(matchObj.start(matchGroupIndex), script)
                 )
             else:
