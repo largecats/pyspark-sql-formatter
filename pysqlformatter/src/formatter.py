@@ -2,7 +2,7 @@ from __future__ import print_function # for print() in Python 2
 import re
 from yapf.yapflib import yapf_api
 from hiveqlformatter import Config, api
-from pysqlformatter.src.token import Token
+from pysqlformatter.src.token import Token, TokenType
 
 class Formatter:
     '''
@@ -25,9 +25,12 @@ class Formatter:
             # print('token.start = {}, token.end = {}'.format(token.start, token.end))
             reformattedScript += pythonReformatted[self.pointer: token.start]
             reformattedQuery = api.format_query(token.value, self.hiveqlConfig)
-            indentCurrLine = Formatter.get_indent(token.start, pythonReformatted)
-            indentPrevLine = Formatter.get_indent(Formatter.get_prev_line_end(token.start, pythonReformatted), pythonReformatted)
-            indent = indentCurrLine if len(indentCurrLine) > len(indentPrevLine) else indentPrevLine
+            currLineIndent = Formatter.get_indent(token.start, pythonReformatted)
+            prevLineIndent = Formatter.get_indent(Formatter.get_prev_line_end(token.start, pythonReformatted), pythonReformatted)
+            if token.type == TokenType.QUERY_IN_VARIABLE:
+                indent = prevLineIndent # align with previous line
+            else:
+                indent = currLineIndent if len(currLineIndent) > len(prevLineIndent) else prevLineIndent # take the maximum indent
             # print('indent = ' + repr(indent))
             reformattedQuery = Formatter.indent_query(reformattedQuery, indent)
             if not pythonReformatted[(token.start-3):token.start] in ["'''", '"""']: # handle queries quoted by '' or "" that are formatted to multiline
@@ -44,7 +47,7 @@ class Formatter:
                 self.pointer = token.end
         reformattedScript += pythonReformatted[self.pointer:]
         self.reset()
-        return reformattedScript
+        return yapf_api.FormatCode(reformattedScript, style_config=self.pythonStyle)[0]
     
     def get_query_strings(self, pythonReformatted):
         sparkSqlMatchObjs = Formatter.get_spark_sql_args(pythonReformatted)
@@ -60,6 +63,7 @@ class Formatter:
             if Formatter.is_query(matchGroup): # e.g., spark.sql('select * from t0')
                 if matchGroup.startswith("'''") or matchGroup.startswith('"""'):
                     matchTokenWithoutQuotes = Token(
+                                            type=TokenType.QUERY,
                                             value=matchGroup.strip('"').strip("'"),
                                             start=match.start(matchGroupIndex)+3,
                                             end=match.end(matchGroupIndex)-3,
@@ -67,6 +71,7 @@ class Formatter:
                                             )
                 else:
                     matchTokenWithoutQuotes = Token(
+                                            type=TokenType.QUERY,
                                             value=matchGroup.strip('"').strip("'"),
                                             start=match.start(matchGroupIndex)+1,
                                             end=match.end(matchGroupIndex)-1,
@@ -75,7 +80,7 @@ class Formatter:
                 queryMatchTokens.append(matchTokenWithoutQuotes)
             else: # e.g., spark.sql(query)
                 queryMatchObj = Formatter.get_query_from_variable_name(matchGroup, pythonReformatted[:match.start(1)])
-                queryMatchToken = Formatter.create_token_from_match(queryMatchObj, pythonReformatted)
+                queryMatchToken = Formatter.create_token_from_match(queryMatchObj, pythonReformatted, TokenType.QUERY_IN_VARIABLE)
                 queryMatchTokens.append(queryMatchToken)
         return queryMatchTokens
 
@@ -108,11 +113,12 @@ class Formatter:
         return queryMatchObjsList[-1]
 
     @staticmethod
-    def create_token_from_match(matchObj, script):
+    def create_token_from_match(matchObj, script, tokenType=TokenType.QUERY_IN_VARIABLE):
         matchGroupIndex = 0
         for m in matchObj.groups():
             if m:
                 return Token(
+                    type=tokenType,
                     value=matchObj.groups()[matchGroupIndex],
                     start=matchObj.start(matchGroupIndex+1), # start(0) is the start of the whole match, see https://docs.python.org/3/library/re.html re.Match.start([group])
                     end=matchObj.end(matchGroupIndex+1), # end(0) is the end of the whole match
