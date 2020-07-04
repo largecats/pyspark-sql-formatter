@@ -6,7 +6,7 @@ A formatter for Pyspark code with SQL queries.
 # Installation
 
 ## Install using pip
-View package at TBD
+View package at https://test.pypi.org/project/pysqlformatter-largecats.
 ```
 python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps pysqlformatter-largecats
 ```
@@ -68,4 +68,3 @@ Call `pysqlformatter.api.format_file()` to format script in file:
 >>> api.format_file(<path_to_file>, inplace=False)
 ...
 ```
-
