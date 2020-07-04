@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import logging
 
-from pysqlformatter.src.api import api
+from pysqlformatter.src import api
 
 logger = logging.getLogger(__name__)
 log_formatter = '[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s:%(funcName)s] %(message)s'
@@ -237,8 +237,8 @@ def final():
     return df
         """.strip() + '\n' # pep8
         self.run(msg, testScript, key)
-        
-    def run(self, msg, testScript, key, formatter=Formatter()):
+
+    def run(self, msg, testScript, key):
         logger.info(msg)
         logger.info('testScript =')
         logger.info(testScript)
