@@ -153,10 +153,10 @@ class Formatter:
     @staticmethod
     def get_query_start(pos, script):
         '''
-        Get position of the start of the actual query in a query match, excluding blank space characters.
+        Get position of the start of the first line of the actual query in a query match.
         '''
         startOfQuery = pos
-        while script[startOfQuery].isspace(): # skip \n, \r after the opening '''/"""
+        while script[startOfQuery] in ['\n', '\r']: # skip \n, \r after the opening '''/"""
             startOfQuery += 1
         return startOfQuery
     
