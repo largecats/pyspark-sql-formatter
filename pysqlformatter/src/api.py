@@ -27,6 +27,22 @@ def format_file(filename, pythonStyle='pep8', hiveqlConfig=Config(), inplace=Fal
             raise Exception('Unsupported config type')
     _format_file(filename, formatter, inplace)
 
+def format_script(script, pythonStyle='pep8', hiveqlConfig=Config()):
+    if type(hiveqlConfig) == type(hiveqlConfig):
+        formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlConfig)
+    else:
+        if type(hiveqlConfig) == str:
+            if hiveqlConfig.startswith('{'):
+                hiveqlConfig = eval(hiveqlConfig)
+                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=api._create_config_from_dict(hiveqlConfig))
+            else:
+                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=api._create_config_from_file(hiveqlConfig))
+        elif type(hiveqlConfig) == dict:
+            formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=api._create_config_from_dict(hiveqlConfig))
+        else:
+            raise Exception('Unsupported config type')
+    _format_script(script, formatter)
+
 def _format_file(filename, formatter, inplace=False):
     script = api._read_from_file(filename)
     reformattedScript = _format_script(script, formatter)
@@ -36,5 +52,5 @@ def _format_file(filename, formatter, inplace=False):
     else: # write to stdout
         sys.stdout.write(reformattedScript)
 
-def _format_script(query, formatter):
-    return formatter.format(query)
+def _format_script(script, formatter):
+    return formatter.format(script)

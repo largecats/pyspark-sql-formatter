@@ -9,9 +9,9 @@ class Formatter:
     Format a script with Python code and Spark SQL, HiveQL queries.
     '''
 
-    def __init__(self, pythonStyle='pep8', hiveqlFormatterConfig=Config()):
+    def __init__(self, pythonStyle='pep8', hiveqlConfig=Config()):
         self.pythonStyle = pythonStyle
-        self.hiveqlConfig = hiveqlFormatterConfig
+        self.hiveqlConfig = hiveqlConfig
         self.pointer = 0 # next position to read
 
     def format(self, script):
@@ -24,13 +24,14 @@ class Formatter:
             # print('token.value = ' + repr(token.value))
             # print('token.start = {}, token.end = {}'.format(token.start, token.end))
             reformattedScript += pythonReformatted[self.pointer: token.start]
-            reformattedQuery = api.format_query(token.value, self.hiveqlConfig)
+            reformattedQuery = api.format_query(token.value, self.hiveqlConfig) # will get rid of starting/trailling blank spaces
             currLineIndent = Formatter.get_indent(token.start, pythonReformatted)
             prevLineIndent = Formatter.get_indent(Formatter.get_prev_line_end(token.start, pythonReformatted), pythonReformatted)
-            if token.type == TokenType.QUERY_IN_VARIABLE:
-                indent = prevLineIndent # align with previous line
-            else:
-                indent = currLineIndent if len(currLineIndent) > len(prevLineIndent) else prevLineIndent # take the maximum indent
+            # if token.type == TokenType.QUERY_IN_VARIABLE:
+            #     indent = prevLineIndent # align with previous line
+            # else:
+            #     indent = currLineIndent if len(currLineIndent) > len(prevLineIndent) else prevLineIndent # take the maximum indent
+            indent = currLineIndent if len(currLineIndent) > len(prevLineIndent) else prevLineIndent
             # print('indent = ' + repr(indent))
             reformattedQuery = Formatter.indent_query(reformattedQuery, indent)
             if not pythonReformatted[(token.start-3):token.start] in ["'''", '"""']: # handle queries quoted by '' or "" that are formatted to multiline
@@ -52,9 +53,9 @@ class Formatter:
     def get_query_strings(self, pythonReformatted):
         sparkSqlMatchObjs = Formatter.get_spark_sql_args(pythonReformatted)
         queryMatchTokens = []
-        for match in sparkSqlMatchObjs:
-            matchGroupIndex = 1
-            for m in match.groups():
+        for matchObj in sparkSqlMatchObjs:
+            matchGroupIndex = 1 # we want the start of the matched group, so need to skip m.start(0), the entire matched string
+            for m in matchObj.groups():
                 if m:
                     matchGroup = m # first match group that is not None
                     break
@@ -65,9 +66,9 @@ class Formatter:
                     matchTokenWithoutQuotes = Token(
                                             type=TokenType.QUERY,
                                             value=matchGroup.strip('"').strip("'"),
-                                            start=match.start(matchGroupIndex)+3,
-                                            end=match.end(matchGroupIndex)-3,
-                                            indent=Formatter.get_indent(match.start(matchGroupIndex)+3, pythonReformatted)
+                                            start=match.start(matchGroupIndex)+3, # skip opening triple quotes
+                                            end=match.end(matchGroupIndex)-3, # skip ending triple quotes
+                                            indent=Formatter.get_indent(match.start(matchGroupIndex)+3, pythonReformatted) # get indent of the start of the query, excluding """/'''
                                             )
                 else:
                     matchTokenWithoutQuotes = Token(
@@ -79,7 +80,7 @@ class Formatter:
                                             )
                 queryMatchTokens.append(matchTokenWithoutQuotes)
             else: # e.g., spark.sql(query)
-                queryMatchObj = Formatter.get_query_from_variable_name(matchGroup, pythonReformatted[:match.start(1)])
+                queryMatchObj = Formatter.get_query_from_variable_name(matchGroup, pythonReformatted[:matchObj.start(matchGroupIndex)]) # may contaiin starting/trailing blank spaces
                 queryMatchToken = Formatter.create_token_from_match(queryMatchObj, pythonReformatted, TokenType.QUERY_IN_VARIABLE)
                 queryMatchTokens.append(queryMatchToken)
         return queryMatchTokens
@@ -102,26 +103,29 @@ class Formatter:
     
     @staticmethod
     def get_query_from_variable_name(queryVariableName, script):
+        '''
+        Result may contain \n, \r after opening quotes and before ending quotes as adding [\n\r]* in the regex somehow triggers yapf syntax error.
+        Instead, the \n, \r will be handled by get_indent() and hiveqlformatter.
+        '''
         queryRegexSingleQuotes = '{queryVariableName}\s*=\s*\'(.*?)\''.format(queryVariableName=queryVariableName)
         queryRegexDoubleQuotes = '{queryVariableName}\s*=\s*"(.*?)"'.format(queryVariableName=queryVariableName)
         queryRegexTipleSingleQuotes = '{queryVariableName}\s*=\s*\'\'\'(.*?)\'\'\''.format(queryVariableName=queryVariableName)
         queryRegexTripleDoubleQuotes = '{queryVariableName}\s*=\s*"""(.*?)"""'.format(queryVariableName=queryVariableName)
         queryRegex = '|'.join([queryRegexTipleSingleQuotes, queryRegexTripleDoubleQuotes, queryRegexSingleQuotes, queryRegexDoubleQuotes])
-        # print(queryRegex)
         queryMatchObjs = re.finditer(queryRegex, script, flags=re.DOTALL)
         queryMatchObjsList = [m for m in queryMatchObjs]
         return queryMatchObjsList[-1]
 
     @staticmethod
     def create_token_from_match(matchObj, script, tokenType=TokenType.QUERY_IN_VARIABLE):
-        matchGroupIndex = 0
+        matchGroupIndex = 1
         for m in matchObj.groups():
             if m:
                 return Token(
                     type=tokenType,
-                    value=matchObj.groups()[matchGroupIndex],
-                    start=matchObj.start(matchGroupIndex+1), # start(0) is the start of the whole match, see https://docs.python.org/3/library/re.html re.Match.start([group])
-                    end=matchObj.end(matchGroupIndex+1), # end(0) is the end of the whole match
+                    value=m,
+                    start=matchObj.start(matchGroupIndex), # start(0) is the start of the whole match, see https://docs.python.org/3/library/re.html re.Match.start([group])
+                    end=matchObj.end(matchGroupIndex), # end(0) is the end of the whole match
                     indent=Formatter.get_indent(matchObj.start(matchGroupIndex), script)
                 )
             else:
@@ -133,13 +137,18 @@ class Formatter:
         Get indentation of the line of given position in script.
         '''
         startOfLine = pos
-        while startOfLine > 0 and script[startOfLine] != '\n': # find start of line, i.e., position of the last \n before pos + 1
+        while script[startOfLine] in ['\n', '\r']: # skip \n, \r after the opening '''/"""; these will be actually removed by hiveqlformatter
+            startOfLine += 1
+        while startOfLine > 0 and (script[startOfLine] not in ['\n', '\r']): # find start of line
+            # print('script[startOfLine] = ' + repr(script[startOfLine]))
             startOfLine -= 1
         startOfLine += 1
         indent = 0
         while script[startOfLine+indent].isspace(): # find position of the first non-space character in the line
             indent += 1
-        return script[startOfLine:startOfLine+indent]
+        indentString = script[startOfLine:startOfLine+indent]
+        # print('indentString = ' + repr(indentString))
+        return indentString
     
     @staticmethod
     def get_prev_line_end(pos, script):
