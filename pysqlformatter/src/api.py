@@ -41,7 +41,7 @@ def format_script(script, pythonStyle='pep8', hiveqlConfig=Config()):
             formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=api._create_config_from_dict(hiveqlConfig))
         else:
             raise Exception('Unsupported config type')
-    _format_script(script, formatter)
+    return _format_script(script, formatter)
 
 def _format_file(filename, formatter, inplace=False):
     script = api._read_from_file(filename)

@@ -8,7 +8,7 @@ setuptools.setup(
     version='0.0.0',
     author='largecats',
     author_email='linfanxiaolinda@outlook.com',
-    description='A formatter for Python code and SQL queries.',
+    description='A formatter for Pyspark code with SQL queries.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/largecats/pyspark-sql-formatter',
