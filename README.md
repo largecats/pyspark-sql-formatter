@@ -2,6 +2,13 @@
 A formatter for Pyspark code with SQL queries.
 
 - [pyspark-sql-formatter](#pyspark-sql-formatter)
+- [Installation](#installation)
+  - [Install using pip](#install-using-pip)
+  - [Install from source](#install-from-source)
+- [Compatibility](#compatibility)
+- [Usage](#usage)
+  - [Use as command-line tool](#use-as-command-line-tool)
+  - [Use as Python library](#use-as-python-library)
 
 # Installation
 
