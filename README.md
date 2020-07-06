@@ -2,6 +2,13 @@
 A formatter for Pyspark code with SQL queries.
 
 - [pyspark-sql-formatter](#pyspark-sql-formatter)
+- [Installation](#installation)
+  - [Install using pip](#install-using-pip)
+  - [Install from source](#install-from-source)
+- [Compatibility](#compatibility)
+- [Usage](#usage)
+  - [Use as command-line tool](#use-as-command-line-tool)
+  - [Use as Python library](#use-as-python-library)
 
 # Installation
 
@@ -45,11 +52,11 @@ optional arguments:
 ```
 E.g.,
 ```
-$ pysqlformatter --python-style='pep8' --hiveql-config='{"reservedKeywordUppercase": False}' -files <path_to_file>
+$ pysqlformatter --python-style='pep8' --hiveql-config="{'reservedKeywordUppercase': False}" -files <path_to_file>
 ```
 Or using config files:
 ```
-$ pysqlformatter --python-style=<path_to_python_style_config_file> --hiveql-config=<path_to_hiveql_config_file> -files <path_to_file>
+$ pysqlformatter --python-style="<path_to_python_style_config_file>" --hiveql-config="<path_to_hiveql_config_file>" -files <path_to_file>
 ```
 
 ## Use as Python library

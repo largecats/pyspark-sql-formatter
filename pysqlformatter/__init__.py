@@ -20,7 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from __future__ import print_function # for print() in Python 2
+from __future__ import print_function  # for print() in Python 2
 import os
 import sys
 import argparse
@@ -39,32 +39,37 @@ logger = logging.getLogger(__name__)
 log_formatter = '[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s:%(funcName)s] %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
+
 def main(argv):
     args = get_arguments(argv)
     pythonStyle = args['python_style']
     hiveqlConfig = args['hiveql_config']
-    filenames = args['files']
-    if filenames:
+    filePaths = args['files']
+    if filePaths:
         if hiveqlConfig:
             if pythonStyle:
-                for filename in filenames:
-                    api.format_file(filename=filename, pythonStyle=pythonStyle, hiveqlConfig=hiveqlConfig, inplace=args.get('inplace'))
+                for filePath in filePaths:
+                    api.format_file(filePath=filePath,
+                                    pythonStyle=pythonStyle,
+                                    hiveqlConfig=hiveqlConfig,
+                                    inplace=args.get('inplace'))
             else:
-                for filename in filenames:
-                    api.format_file(filename=filename, hiveqlConfig=hiveqlConfig, inplace=args.get('inplace'))
+                for filePath in filePaths:
+                    api.format_file(filePath=filePath, hiveqlConfig=hiveqlConfig, inplace=args.get('inplace'))
         else:
             if pythonStyle:
-                for filename in filenames:
-                    api.format_file(filename=filename, pythonStyle=pythonStyle, inplace=args.get('inplace'))
+                for filePath in filePaths:
+                    api.format_file(filePath=filePath, pythonStyle=pythonStyle, inplace=args.get('inplace'))
             else:
-                for filename in filenames:
-                    api.format_file(filename=filename, inplace=args.get('inplace'))
+                for filePath in filePaths:
+                    api.format_file(filePath=filePath, inplace=args.get('inplace'))
+
 
 def get_arguments(argv):
     '''
     Return arguments passed via command-line.
 
-    Paramters:
+    Parameters:
     argv: list
         sys.argv
     
@@ -73,40 +78,29 @@ def get_arguments(argv):
     '''
     parser = argparse.ArgumentParser(description='Formatter for Pyspark code and HiveQL queries.')
 
-    parser.add_argument(
-        '-files',
-        type=str, 
-        nargs='+',
-        help='Paths to files to format.'
-    )
+    parser.add_argument('-files', type=str, nargs='+', help='Paths to files to format.')
 
-    parser.add_argument(
-        '-i',
-        '--inplace',
-        action='store_true',
-        help='Format the files in place.'
-    )
+    parser.add_argument('-i', '--inplace', action='store_true', help='Format the files in place.')
 
-    parser.add_argument(
-        '--python-style',
-        type=str,
-        default=None,
-        help='Style for Python formatting, interface to https://github.com/google/yapf.'
-    )
+    parser.add_argument('--python-style',
+                        type=str,
+                        default=None,
+                        help='Style for Python formatting, interface to https://github.com/google/yapf.')
 
     parser.add_argument(
         '--hiveql-config',
         type=str,
         default=None,
-        help="Configurations for the query language, interface to https://github.com/largecats/hiveql-formatter."
-    )
-    
+        help="Configurations for the query language, interface to https://github.com/largecats/hiveql-formatter.")
+
     args = vars(parser.parse_args(argv[1:]))
 
     return args
 
+
 def run_main():
     main(sys.argv)
+
 
 if __name__ == '__main__':
     run_main()
