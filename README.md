@@ -1,5 +1,5 @@
 # pyspark-sql-formatter
-A formatter for Pyspark code with SQL queries.
+A formatter for Pyspark code with SQL queries. It relies on Python formatter [yapf](https://github.com/google/yapf) and HiveQL formatter [hiveqlformatter](https://github.com/largecats/hiveql-formatter), both working indepdendently. User can specify configurations for either language separately.
 
 - [pyspark-sql-formatter](#pyspark-sql-formatter)
 - [Installation](#installation)
