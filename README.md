@@ -45,11 +45,11 @@ optional arguments:
 ```
 E.g.,
 ```
-$ pysqlformatter --python-style='pep8' --hiveql-config='{"reservedKeywordUppercase": False}' -files <path_to_file>
+$ pysqlformatter --python-style='pep8' --hiveql-config="{'reservedKeywordUppercase': False}" -files <path_to_file>
 ```
 Or using config files:
 ```
-$ pysqlformatter --python-style=<path_to_python_style_config_file> --hiveql-config=<path_to_hiveql_config_file> -files <path_to_file>
+$ pysqlformatter --python-style="<path_to_python_style_config_file>" --hiveql-config="<path_to_hiveql_config_file>" -files <path_to_file>
 ```
 
 ## Use as Python library
