@@ -36,13 +36,13 @@ Supports Python 2.7 and 3.6+.
 
 ## Use as command-line tool
 ```
-usage: pysqlformatter [-h] [-files FILES [FILES ...]] [-i] [--python-style PYTHON_STYLE] [--hiveql-config HIVEQL_CONFIG]
+usage: pysqlformatter [-h] [-f FILES [FILES ...]] [-i] [--python-style PYTHON_STYLE] [--hiveql-config HIVEQL_CONFIG]
 
 Formatter for Pyspark code and HiveQL queries.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -files FILES [FILES ...]
+  -f FILES [FILES ...], --files FILES [FILES ...]
                         Paths to files to format.
   -i, --inplace         Format the files in place.
   --python-style PYTHON_STYLE
@@ -52,11 +52,11 @@ optional arguments:
 ```
 E.g.,
 ```
-$ pysqlformatter --python-style='pep8' --hiveql-config="{'reservedKeywordUppercase': False}" -files <path_to_file>
+$ pysqlformatter --python-style='pep8' --hiveql-config="{'reservedKeywordUppercase': False}" -f <path_to_file>
 ```
 Or using config files:
 ```
-$ pysqlformatter --python-style="<path_to_python_style_config_file>" --hiveql-config="<path_to_hiveql_config_file>" -files <path_to_file>
+$ pysqlformatter --python-style="<path_to_python_style_config_file>" --hiveql-config="<path_to_hiveql_config_file>" -f <path_to_file>
 ```
 
 ## Use as Python library
