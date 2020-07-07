@@ -1,4 +1,4 @@
-from __future__ import print_function # for print() in Python 2
+from __future__ import print_function  # for print() in Python 2
 import sys
 import re
 import codecs
@@ -11,6 +11,7 @@ from hiveqlformatter import api as hiveqlAPI
 logger = logging.getLogger(__name__)
 log_formatter = '[%(asctime)s] %(levelname)s [%(filePath)s:%(lineno)s:%(funcName)s] %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
+
 
 def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inplace=False):
     '''
@@ -35,14 +36,18 @@ def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inpla
         if type(hiveqlConfig) == str:
             if hiveqlConfig.startswith('{'):
                 hiveqlConfig = eval(hiveqlConfig)
-                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                formatter = Formatter(pythonStyle=pythonStyle,
+                                      hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
             else:
-                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
+                formatter = Formatter(pythonStyle=pythonStyle,
+                                      hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
         elif type(hiveqlConfig) == dict:
-            formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+            formatter = Formatter(pythonStyle=pythonStyle,
+                                  hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
         else:
             raise Exception('Unsupported config type')
     _format_file(filePath, formatter, inplace)
+
 
 def format_script(script, pythonStyle='pep8', hiveqlConfig=hiveqlConfig()):
     '''
@@ -65,14 +70,18 @@ def format_script(script, pythonStyle='pep8', hiveqlConfig=hiveqlConfig()):
         if type(hiveqlConfig) == str:
             if hiveqlConfig.startswith('{'):
                 hiveqlConfig = eval(hiveqlConfig)
-                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                formatter = Formatter(pythonStyle=pythonStyle,
+                                      hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
             else:
-                formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
+                formatter = Formatter(pythonStyle=pythonStyle,
+                                      hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
         elif type(hiveqlConfig) == dict:
-            formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+            formatter = Formatter(pythonStyle=pythonStyle,
+                                  hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
         else:
             raise Exception('Unsupported config type')
     return _format_script(script, formatter)
+
 
 def _format_file(filePath, formatter, inplace=False):
     '''
@@ -89,13 +98,44 @@ def _format_file(filePath, formatter, inplace=False):
     
     Return: None
     '''
-    script = hiveqlAPI._read_from_file(filePath)
+    script = _read_from_file(filePath)
     reformattedScript = _format_script(script, formatter)
-    if inplace: # overwrite file
+    if inplace:  # overwrite file
         logger.info('Writing to ' + filePath + '...')
-        hiveqlAPI._write_to_file(reformattedScript, filePath)
-    else: # write to stdout
+        _write_to_file(reformattedScript, filePath)
+    else:  # write to stdout
         sys.stdout.write(reformattedScript)
+
+
+def _read_from_file(filePath):
+    '''
+    The input helper function for _format_file(). Read from given file and return its content.
+
+    Parameters
+    filePath: string
+        Path to the file to format.
+    
+    Return: string
+        The file content.
+    '''
+    with open(filename=filePath, mode='r', newline='', encoding='utf-8') as f:
+        text = f.read()
+    return text
+
+
+def _write_to_file(formattedQuery, filePath):
+    '''
+    The output helper function for _format_file(). Write formatted query to given file.
+
+    Parameters
+    formattedQuery: string
+        The formatted query.
+    filePath: string
+        Path to the file to write to.
+    '''
+    with open(filename=filePath, mode='w', newline='', encoding='utf-8') as f:
+        f.write(formattedQuery)
+
 
 def _format_script(script, formatter):
     '''
