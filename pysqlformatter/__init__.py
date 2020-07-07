@@ -78,7 +78,7 @@ def get_arguments(argv):
     '''
     parser = argparse.ArgumentParser(description='Formatter for Pyspark code and HiveQL queries.')
 
-    parser.add_argument('-files', type=str, nargs='+', help='Paths to files to format.')
+    parser.add_argument('-f', '--files', type=str, nargs='+', help='Paths to files to format.')
 
     parser.add_argument('-i', '--inplace', action='store_true', help='Format the files in place.')
 
