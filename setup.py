@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pysqlformatter-largecats',  # Replace with your own username
-    version='0.0.7',
+    version='0.0.8',
     author='largecats',
     author_email='linfanxiaolinda@outlook.com',
     description='A formatter for Pyspark code with SQL queries.',
