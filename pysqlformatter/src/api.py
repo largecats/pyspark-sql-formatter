@@ -1,4 +1,5 @@
 from __future__ import print_function  # for print() in Python 2
+from io import open
 import sys
 import re
 import logging
@@ -117,7 +118,7 @@ def _read_from_file(filePath):
     Return: string
         The file content.
     '''
-    with open(name=filePath, mode='r', newline='') as f:
+    with open(name=filePath, mode='r', newline='', encoding='utf-8') as f:
         text = f.read()
     return text
 
@@ -132,7 +133,7 @@ def _write_to_file(formattedQuery, filePath):
     filePath: string
         Path to the file to write to.
     '''
-    with open(name=filePath, mode='w', newline='') as f:
+    with open(name=filePath, mode='w', newline='', encoding='utf-8') as f:
         f.write(formattedQuery)
 
 
