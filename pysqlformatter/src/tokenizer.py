@@ -49,7 +49,7 @@ class Token:
         if type == TokenType.QUERY_IN_VARIABLE:
             indent = prevLineIndent  # align with previous line
         else:
-            if queryStart == start:  # if there are no starting \n, \r, align with current line
+            if queryStart == start:  # if there are no starting \n, align with current line
                 indent = currLineIndent
             else:  # align with previous line
                 indent = prevLineIndent
@@ -218,8 +218,8 @@ class Tokenizer:
     def get_query_from_variable_name(queryVariableName, script):
         '''
         Retrieve the actual query string from its variable name.
-        Result may contain \n, \r after opening quotes and before ending quotes as adding [\n\r]* in the regex somehow triggers yapf syntax error.
-        Instead, the \n, \r will be handled by get_token_indent() and hiveqlformatter.
+        Result may contain \n after opening quotes and before ending quotes as adding [\n]* in the regex somehow triggers yapf syntax error.
+        Instead, the \n will be handled by get_token_indent() and hiveqlformatter.
 
         Parameters
         queryVariableName: string
