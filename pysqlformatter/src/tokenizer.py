@@ -71,15 +71,12 @@ class Token:
             Indentation of the line containing given position.
         '''
         startOfLine = pos
-        # while script[startOfLine] in ['\n', '\r']: # skip \n, \r after the opening '''/"""; these will be actually removed by hiveqlformatter
-        #     startOfLine += 1
-        while startOfLine > 0 and (script[startOfLine] not in ['\n', '\r']):  # find start of line
+        while startOfLine > 0 and (script[startOfLine] != '\n'):  # find start of line
             startOfLine -= 1
         startOfLine += 1
         indent = 0
-        while script[startOfLine + indent] not in [
-                '\n', '\r'
-        ] and script[startOfLine + indent].isspace():  # find position of the first non-space character in the line
+        while script[startOfLine + indent] != '\n' and script[
+                startOfLine + indent].isspace():  # find position of the first non-space character in the line
             indent += 1
         indentString = script[startOfLine:startOfLine + indent]
         return indentString
@@ -99,7 +96,7 @@ class Token:
             Position of the start of the first line of the query.
         '''
         startOfQuery = pos
-        while script[startOfQuery] in ['\n', '\r']:  # skip \n, \r after the opening '''/"""
+        while script[startOfQuery] == '\n':  # skip \n after the opening '''/"""
             startOfQuery += 1
         return startOfQuery
 
@@ -118,9 +115,9 @@ class Token:
             Position of the last character in the previous line.
         '''
         endOfPrevLine = pos
-        while endOfPrevLine > 0 and script[endOfPrevLine] not in ['\n', '\r']:
+        while endOfPrevLine > 0 and script[endOfPrevLine] != '\n':
             endOfPrevLine -= 1
-        while script[endOfPrevLine] in ['\n', '\r']:
+        while script[endOfPrevLine] == '\n':
             endOfPrevLine -= 1
         return endOfPrevLine
 
