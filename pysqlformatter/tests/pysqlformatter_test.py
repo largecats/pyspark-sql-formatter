@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 log_formatter = '[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s:%(funcName)s] %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
-class Test:
 
+class Test:
     def __init__(self):
         pass
-    
+
     def test_script_with_simple_query_as_variable(self):
         msg = 'Testing script with simple query as variable passed to spark.sql()'
         testScript = """
@@ -28,9 +28,9 @@ FROM
     t0
 '''
 df = spark.sql(query)
-        """.strip() + '\n' # pep8
+        """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
-    
+
     def test_script_with_simple_query_as_argument(self):
         msg = 'Testing script with simple query in spark.sql()'
         testScript = """
@@ -43,9 +43,9 @@ SELECT
 FROM
     t0
 ''')
-        """.strip() + '\n' # pep8
+        """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
-    
+
     def test_script_with_complex_query_as_variable1(self):
         msg = 'Testing script with complex query in spark.sql()'
         testScript = """
@@ -75,7 +75,6 @@ def final():
         key = """
 import re
 
-
 def get_base(date):
     query = '''
     SELECT
@@ -91,7 +90,6 @@ def get_base(date):
     df.cache()
     return df
 
-
 def add_columns():
     df = spark.sql('''
     SELECT
@@ -102,12 +100,11 @@ def add_columns():
     ''')
     return df
 
-
 def final():
     columns = ['id', 'date', 'c1', 'c2']
     df = df.select(columns)
     return df
-        """.strip() + '\n' # pep8
+        """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
 
     def test_script_with_complex_query_as_variable_currLineIndent_less_than_prevLineIndent(self):
@@ -139,7 +136,6 @@ def final():
         key = """
 import re
 
-
 def get_base(date):
     query = '''
     SELECT
@@ -155,7 +151,6 @@ def get_base(date):
     df.cache()
     return df
 
-
 def add_columns():
     df = spark.sql('''
     SELECT
@@ -166,12 +161,11 @@ def add_columns():
     ''')
     return df
 
-
 def final():
     columns = ['id', 'date', 'c1', 'c2']
     df = df.select(columns)
     return df
-        """.strip() + '\n' # pep8
+        """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
 
     def test_script_with_complex_query_as_variable_currLineIndent_greater_than_prevLineIndent(self):
@@ -203,7 +197,6 @@ def final():
         key = """
 import re
 
-
 def get_base(date):
     query = '''
     SELECT
@@ -219,7 +212,6 @@ def get_base(date):
     df.cache()
     return df
 
-
 def add_columns():
     df = spark.sql('''
     SELECT
@@ -230,12 +222,34 @@ def add_columns():
     ''')
     return df
 
-
 def final():
     columns = ['id', 'date', 'c1', 'c2']
     df = df.select(columns)
     return df
-        """.strip() + '\n' # pep8
+        """.strip() + '\n'  # pep8
+        self.run(msg, testScript, key)
+
+    def test_script_with_query_starting_with_comment(self):
+        msg = 'Testing script with query that starts with line comment'
+        testScript = """
+def foo():
+    query = '''
+    -- this is a line comment
+    select * from t0
+    '''
+    return spark.sql(query)
+        """
+        key = """
+def foo():
+    query = '''
+    -- this is a line comment
+    SELECT
+        *
+    FROM
+        t0
+    '''
+    return spark.sql(query)
+        """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
 
     def run(self, msg, testScript, key):
@@ -257,6 +271,7 @@ def final():
         tests = list(filter(lambda m: m.startswith('test_'), dir(self)))
         for test in tests:
             getattr(self, test)()
+
 
 if __name__ == "__main__":
     Test().run_all()
