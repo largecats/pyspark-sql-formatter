@@ -75,8 +75,8 @@ class Token:
             startOfLine -= 1
         startOfLine += 1
         indent = 0
-        while script[startOfLine + indent] != '\n' and script[
-                startOfLine + indent].isspace():  # find position of the first non-space character in the line
+        # find position of the first non-space character in the line
+        while (script[startOfLine + indent] != '\n') and script[startOfLine + indent].isspace():
             indent += 1
         indentString = script[startOfLine:startOfLine + indent]
         return indentString
@@ -103,7 +103,7 @@ class Token:
     @staticmethod
     def get_prev_line_end(pos, script):
         '''
-        Get position of the end of the previous line.
+        Get position of the end of the previous non-empty line.
 
         Parameters
         pos: int
