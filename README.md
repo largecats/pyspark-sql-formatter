@@ -44,7 +44,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -f FILES [FILES ...], --files FILES [FILES ...]
                         Paths to files to format.
-  -i, --inplace         Format the files in place.
+  -i, --in-place        Format the files in place.
   --python-style PYTHON_STYLE
                         Style for Python formatting, interface to https://github.com/google/yapf.
   --hiveql-config HIVEQL_CONFIG
@@ -72,6 +72,6 @@ Call `pysqlformatter.api.format_script()` to format script passed as string:
 Call `pysqlformatter.api.format_file()` to format script in file:
 ```
 >>> from pysqlformatter import api
->>> api.format_file(<path_to_file>, inplace=False)
+>>> api.format_file(<path_to_file>, inPlace=False)
 ...
 ```

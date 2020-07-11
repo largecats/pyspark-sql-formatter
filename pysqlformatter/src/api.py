@@ -13,7 +13,7 @@ log_formatter = '[%(asctime)s] %(levelname)s [%(filePath)s:%(lineno)s:%(funcName
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
 
-def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inplace=False):
+def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inPlace=False):
     '''
     Format file with given settings for python style and hiveql configurations.
 
@@ -24,7 +24,7 @@ def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inpla
         A style name or path to a style config file; interface to https://github.com/google/yapf.
     hiveqlConfig: string, dict, or hiveqlformatter.src.config.Config() object
         Configurations for the query language; interface to https://github.com/largecats/hiveql-formatter.
-    inplace: bool
+    inPlace: bool
         If True, will format the file in place.
         Else, will write the formatted file to stdout.
 
@@ -46,7 +46,7 @@ def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inpla
                                   hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
         else:
             raise Exception('Unsupported config type')
-    _format_file(filePath, formatter, inplace)
+    _format_file(filePath, formatter, inPlace)
 
 
 def format_script(script, pythonStyle='pep8', hiveqlConfig=hiveqlConfig()):
@@ -83,7 +83,7 @@ def format_script(script, pythonStyle='pep8', hiveqlConfig=hiveqlConfig()):
     return _format_script(script, formatter)
 
 
-def _format_file(filePath, formatter, inplace=False):
+def _format_file(filePath, formatter, inPlace=False):
     '''
     The I/O helper function for format_file(). Read from given file, format it, and write to specified output.
 
@@ -92,7 +92,7 @@ def _format_file(filePath, formatter, inplace=False):
         Path to the file to format.
     formatter: pysqlformatter.src.formatter.Formatter() object
         Formatter.
-    inplace: bool
+    inPlace: bool
         If True, will format the file in place.
         Else, will write the formatted file to stdout.
     
@@ -100,7 +100,7 @@ def _format_file(filePath, formatter, inplace=False):
     '''
     script = _read_from_file(filePath)
     reformattedScript = _format_script(script, formatter)
-    if inplace:  # overwrite file
+    if inPlace:  # overwrite file
         logger.info('Writing to ' + filePath + '...')
         _write_to_file(reformattedScript, filePath)
     else:  # write to stdout

@@ -52,17 +52,17 @@ def main(argv):
                     api.format_file(filePath=filePath,
                                     pythonStyle=pythonStyle,
                                     hiveqlConfig=hiveqlConfig,
-                                    inplace=args.get('inplace'))
+                                    inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, hiveqlConfig=hiveqlConfig, inplace=args.get('inplace'))
+                    api.format_file(filePath=filePath, hiveqlConfig=hiveqlConfig, inPlace=args.get('in_place'))
         else:
             if pythonStyle:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, pythonStyle=pythonStyle, inplace=args.get('inplace'))
+                    api.format_file(filePath=filePath, pythonStyle=pythonStyle, inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, inplace=args.get('inplace'))
+                    api.format_file(filePath=filePath, inPlace=args.get('in_place'))
 
 
 def get_arguments(argv):
@@ -80,7 +80,7 @@ def get_arguments(argv):
 
     parser.add_argument('-f', '--files', type=str, nargs='+', help='Paths to files to format.')
 
-    parser.add_argument('-i', '--inplace', action='store_true', help='Format the files in place.')
+    parser.add_argument('-i', '--in-place', action='store_true', help='Format the files in place.')
 
     parser.add_argument('--python-style',
                         type=str,
