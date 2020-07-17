@@ -30,8 +30,8 @@ import codecs
 import json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from hiveqlformatter.src import hiveql_config as hc
-from hiveqlformatter import Config
+from sparksqlformatter.src import sparksql_config as hc
+from sparksqlformatter import Config
 from pysqlformatter.src import api
 from pysqlformatter.src.formatter import Formatter
 
@@ -43,19 +43,19 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 def main(argv):
     args = get_arguments(argv)
     pythonStyle = args['python_style']
-    hiveqlConfig = args['hiveql_config']
+    sparksqlConfig = args['sparksql_config']
     filePaths = args['files']
     if filePaths:
-        if hiveqlConfig:
+        if sparksqlConfig:
             if pythonStyle:
                 for filePath in filePaths:
                     api.format_file(filePath=filePath,
                                     pythonStyle=pythonStyle,
-                                    hiveqlConfig=hiveqlConfig,
+                                    sparksqlConfig=sparksqlConfig,
                                     inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, hiveqlConfig=hiveqlConfig, inPlace=args.get('in_place'))
+                    api.format_file(filePath=filePath, sparksqlConfig=sparksqlConfig, inPlace=args.get('in_place'))
         else:
             if pythonStyle:
                 for filePath in filePaths:
@@ -82,16 +82,22 @@ def get_arguments(argv):
 
     parser.add_argument('-i', '--in-place', action='store_true', help='Format the files in place.')
 
+    parser.add_argument('--query-ident',
+                        type=str,
+                        default=['query'],
+                        nargs='+',
+                        help="Strings contained by variable names of queries to format. Default to 'query'.")
+
     parser.add_argument('--python-style',
                         type=str,
                         default=None,
                         help='Style for Python formatting, interface to https://github.com/google/yapf.')
 
     parser.add_argument(
-        '--hiveql-config',
+        '--sparksql-config',
         type=str,
         default=None,
-        help="Configurations for the query language, interface to https://github.com/largecats/hiveql-formatter.")
+        help="Configurations for the query language, interface to https://github.com/largecats/sparksql-formatter.")
 
     args = vars(parser.parse_args(argv[1:]))
 
