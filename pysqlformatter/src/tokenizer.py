@@ -118,8 +118,8 @@ class Token:
 
 
 class Tokenizer:
-    def __init__(self, queryIdent):
-        self.queryIdent = queryIdent
+    def __init__(self, queryNames):
+        self.queryNames = queryNames
 
     def tokenize(self, script):
         '''
@@ -143,7 +143,17 @@ class Tokenizer:
         return queryTokens
 
     def get_query_variable(self, script):
-        queryVariableNames = '|'.join(self.queryIdent)
+        '''
+        Find queries stored in variables with designated set of variable names in self.queryNames.
+
+        Paramters
+        script: string
+            The script to format.
+        
+        Return: list
+            Tokens of matched queries.
+        '''
+        queryVariableNames = '|'.join(self.queryNames)
         queryRegexSingleQuotes = '{queryVariableNames}\s*=\s*\'(.*?)\''.format(queryVariableNames=queryVariableNames)
         queryRegexDoubleQuotes = '{queryVariableNames}\s*=\s*"(.*?)"'.format(queryVariableNames=queryVariableNames)
         queryRegexTipleSingleQuotes = '{queryVariableNames}\s*=\s*\'\'\'(.*?)\'\'\''.format(
@@ -165,13 +175,14 @@ class Tokenizer:
 
     def get_query_argument(self, script):
         '''
-        Match spark.sql() blocks in the script.
-        Parameters
+        Find queries in spark.sql() in the script.
+
+        Paramters
         script: string
             The script to format.
         
-        Return: re.finditer object
-            Iterator for all matched content in spark.sql()
+        Return: list
+            Tokens of matched queries.
         '''
         sparkSqlRegex = 'spark\.sql\((.*?)\)'
         sparkSqlMatchObjs = re.finditer(sparkSqlRegex, script, flags=re.DOTALL)
@@ -185,14 +196,14 @@ class Tokenizer:
                 else:
                     matchGroupIndex += 1
             if Tokenizer.is_query(matchGroup):  # e.g., spark.sql('select * from t0')
-                if matchGroup.startswith("'''") or matchGroup.startswith('"""'):
+                if matchGroup.startswith("'''") or matchGroup.startswith('"""'): # enclosed by triple quotes
                     matchTokenWithoutQuotes = Token(
                         type=TokenType.QUERY_ARGUMENT,
                         value=matchGroup.strip('"').strip("'"),
                         start=matchObj.start(matchGroupIndex) + 3,  # skip opening triple quotes
                         end=matchObj.end(matchGroupIndex) - 3,  # skip ending triple quotes
                         script=script)
-                else:
+                else: # enclosed by single quotes
                     matchTokenWithoutQuotes = Token(
                         type=TokenType.QUERY_ARGUMENT,
                         value=matchGroup.strip('"').strip("'"),

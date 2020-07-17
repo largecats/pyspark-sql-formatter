@@ -49,7 +49,7 @@ def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), i
     _format_file(filePath, formatter, inPlace)
 
 
-def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryIdent=['query']):
+def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query']):
     '''
     Format script using given settings for python style and sparksql configurations.
 
@@ -65,22 +65,22 @@ def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), q
         The formatted script.
     '''
     if type(sparksqlConfig) == type(sparksqlConfig):
-        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig, queryIdent=queryIdent)
+        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig, queryNames=queryNames)
     else:
         if type(sparksqlConfig) == str:
             if sparksqlConfig.startswith('{'):
                 sparksqlConfig = eval(sparksqlConfig)
                 formatter = Formatter(pythonStyle=pythonStyle,
                                       sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
-                                      queryIdent=queryIdent)
+                                      queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
                                       sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig),
-                                      queryIdent=queryIdent)
+                                      queryNames=queryNames)
         elif type(sparksqlConfig) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
                                   sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
-                                  queryIdent=queryIdent)
+                                  queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
     return _format_script(script, formatter)

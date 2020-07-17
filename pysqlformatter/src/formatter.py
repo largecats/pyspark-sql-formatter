@@ -9,7 +9,7 @@ class Formatter:
     '''
     Format a script with Python code and Spark SQL, HiveQL queries.
     '''
-    def __init__(self, pythonStyle='pep8', sparksqlConfig=Config(), queryIdent=['query']):
+    def __init__(self, pythonStyle='pep8', sparksqlConfig=Config(), queryNames=['query']):
         '''
         Parameters
         pythonStyle: string
@@ -20,7 +20,7 @@ class Formatter:
         self.pythonStyle = pythonStyle
         self.sparksqlConfig = sparksqlConfig
         self.pointer = 0  # next position to read
-        self.tokenizer = Tokenizer(queryIdent=queryIdent)
+        self.tokenizer = Tokenizer(queryNames=queryNames)
 
     def format(self, script):
         pythonReformatted = yapf_api.FormatCode(script, style_config=self.pythonStyle)[0]

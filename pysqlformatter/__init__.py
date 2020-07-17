@@ -76,13 +76,13 @@ def get_arguments(argv):
     Returns: dict
         A dictionary containing arguments for the formatter.
     '''
-    parser = argparse.ArgumentParser(description='Formatter for Pyspark code and HiveQL queries.')
+    parser = argparse.ArgumentParser(description='Formatter for Pyspark code and SparkSQL queries.')
 
     parser.add_argument('-f', '--files', type=str, nargs='+', help='Paths to files to format.')
 
     parser.add_argument('-i', '--in-place', action='store_true', help='Format the files in place.')
 
-    parser.add_argument('--query-ident',
+    parser.add_argument('--query-names',
                         type=str,
                         default=['query'],
                         nargs='+',
