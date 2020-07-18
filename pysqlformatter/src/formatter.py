@@ -2,7 +2,7 @@ from __future__ import print_function  # for print() in Python 2
 import re
 from yapf.yapflib import yapf_api
 from sparksqlformatter import Config, api
-from pysqlformatter.src.tokenizer import Token, Tokenizer
+from pysqlformatter.src.tokenizer import Tokenizer
 
 
 class Formatter:
