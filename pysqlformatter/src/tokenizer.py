@@ -1,6 +1,6 @@
 import re
 
-from pysqlformatter.src.token import Token
+from pysqlformatter.src.token import TokenType, TokenType
 
 
 class Tokenizer:
