@@ -5,85 +5,90 @@ import re
 import logging
 
 from pysqlformatter.src.formatter import Formatter
-from hiveqlformatter import Config as hiveqlConfig
-from hiveqlformatter import api as hiveqlAPI
+from sparksqlformatter import Config as sparksqlConfig
+from sparksqlformatter import api as sparksqlAPI
 
 logger = logging.getLogger(__name__)
 log_formatter = '[%(asctime)s] %(levelname)s [%(filePath)s:%(lineno)s:%(funcName)s] %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
 
-def format_file(filePath, pythonStyle='pep8', hiveqlConfig=hiveqlConfig(), inplace=False):
+def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query'], inPlace=False):
     '''
-    Format file with given settings for python style and hiveql configurations.
+    Format file with given settings for python style and sparksql configurations.
 
     Parameters
     filePath: string
         Path to the file to format.
     pythonStyle: string
         A style name or path to a style config file; interface to https://github.com/google/yapf.
-    hiveqlConfig: string, dict, or hiveqlformatter.src.config.Config() object
-        Configurations for the query language; interface to https://github.com/largecats/hiveql-formatter.
-    inplace: bool
+    sparksqlConfig: string, dict, or sparksqlformatter.src.config.Config() object
+        Configurations for the query language; interface to https://github.com/largecats/sparksql-formatter.
+    inPlace: bool
         If True, will format the file in place.
         Else, will write the formatted file to stdout.
 
     Return: None
     '''
-    if type(hiveqlConfig) == type(hiveqlConfig):
-        formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlConfig)
+    if type(sparksqlConfig) == type(sparksqlConfig):
+        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig)
     else:
-        if type(hiveqlConfig) == str:
-            if hiveqlConfig.startswith('{'):
-                hiveqlConfig = eval(hiveqlConfig)
+        if type(sparksqlConfig) == str:
+            if sparksqlConfig.startswith('{'):
+                sparksqlConfig = eval(sparksqlConfig)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                      queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
-        elif type(hiveqlConfig) == dict:
+                                      sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig))
+        elif type(sparksqlConfig) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                  queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
-    _format_file(filePath, formatter, inplace)
+    _format_file(filePath, formatter, inPlace)
 
 
-def format_script(script, pythonStyle='pep8', hiveqlConfig=hiveqlConfig()):
+def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query']):
     '''
-    Format script using given settings for python style and hiveql configurations.
+    Format script using given settings for python style and sparksql configurations.
 
     Parameters
     script: string
         The script to be formatted.
     pythonStyle: string
         A style name or path to a style config file; interface to https://github.com/google/yapf.
-    hiveqlConfig: string, dict, or hiveqlformatter.src.config.Config() object
-        Configurations for the query language; interface to https://github.com/largecats/hiveql-formatter.
+    sparksqlConfig: string, dict, or sparksqlformatter.src.config.Config() object
+        Configurations for the query language; interface to https://github.com/largecats/sparksql-formatter.
     
     Return: string
         The formatted script.
     '''
-    if type(hiveqlConfig) == type(hiveqlConfig):
-        formatter = Formatter(pythonStyle=pythonStyle, hiveqlConfig=hiveqlConfig)
+    if type(sparksqlConfig) == type(sparksqlConfig):
+        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig, queryNames=queryNames)
     else:
-        if type(hiveqlConfig) == str:
-            if hiveqlConfig.startswith('{'):
-                hiveqlConfig = eval(hiveqlConfig)
+        if type(sparksqlConfig) == str:
+            if sparksqlConfig.startswith('{'):
+                sparksqlConfig = eval(sparksqlConfig)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                      queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      hiveqlConfig=hiveqlAPI._create_config_from_file(hiveqlConfig))
-        elif type(hiveqlConfig) == dict:
+                                      sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig),
+                                      queryNames=queryNames)
+        elif type(sparksqlConfig) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  hiveqlConfig=hiveqlAPI._create_config_from_dict(hiveqlConfig))
+                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                  queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
     return _format_script(script, formatter)
 
 
-def _format_file(filePath, formatter, inplace=False):
+def _format_file(filePath, formatter, inPlace=False):
     '''
     The I/O helper function for format_file(). Read from given file, format it, and write to specified output.
 
@@ -92,19 +97,19 @@ def _format_file(filePath, formatter, inplace=False):
         Path to the file to format.
     formatter: pysqlformatter.src.formatter.Formatter() object
         Formatter.
-    inplace: bool
+    inPlace: bool
         If True, will format the file in place.
         Else, will write the formatted file to stdout.
     
     Return: None
     '''
     script = _read_from_file(filePath)
-    reformattedScript = _format_script(script, formatter)
-    if inplace:  # overwrite file
+    formattedScript = _format_script(script, formatter)
+    if inPlace:  # overwrite file
         logger.info('Writing to ' + filePath + '...')
-        _write_to_file(reformattedScript, filePath)
+        _write_to_file(formattedScript, filePath)
     else:  # write to stdout
-        sys.stdout.write(reformattedScript)
+        sys.stdout.write(formattedScript)
 
 
 def _read_from_file(filePath):
@@ -146,7 +151,7 @@ def _format_script(script, formatter):
     Parameters
     string: string
         The script to format.
-    formatter: hiveqlformatter.src.formatter.Formatter() object
+    formatter: sparksqlformatter.src.formatter.Formatter() object
         Formatter.
     
     Return: string

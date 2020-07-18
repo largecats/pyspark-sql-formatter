@@ -75,13 +75,16 @@ def final():
         key = """
 import re
 
+
 def get_base(date):
     query = '''
     SELECT
         *
     FROM
         t0
-        LEFT JOIN t1 ON t0.id = t1.id
+    LEFT JOIN
+        t1
+        ON t0.id = t1.id
     WHERE
         t1.date = '{date}'
     '''
@@ -90,15 +93,19 @@ def get_base(date):
     df.cache()
     return df
 
+
 def add_columns():
     df = spark.sql('''
     SELECT
         *
     FROM
         base
-        LEFT JOIN t2 ON base.id = t2.id
+    LEFT JOIN
+        t2
+        ON base.id = t2.id
     ''')
     return df
+
 
 def final():
     columns = ['id', 'date', 'c1', 'c2']
@@ -136,13 +143,16 @@ def final():
         key = """
 import re
 
+
 def get_base(date):
     query = '''
     SELECT
         *
     FROM
         t0
-        LEFT JOIN t1 ON t0.id = t1.id
+    LEFT JOIN
+        t1
+        ON t0.id = t1.id
     WHERE
         t1.date = '{date}'
     '''
@@ -151,15 +161,19 @@ def get_base(date):
     df.cache()
     return df
 
+
 def add_columns():
     df = spark.sql('''
     SELECT
         *
     FROM
         base
-        LEFT JOIN t2 ON base.id = t2.id
+    LEFT JOIN
+        t2
+        ON base.id = t2.id
     ''')
     return df
+
 
 def final():
     columns = ['id', 'date', 'c1', 'c2']
@@ -197,13 +211,16 @@ def final():
         key = """
 import re
 
+
 def get_base(date):
     query = '''
     SELECT
         *
     FROM
         t0
-        LEFT JOIN t1 ON t0.id = t1.id
+    LEFT JOIN
+        t1
+        ON t0.id = t1.id
     WHERE
         t1.date = '{date}'
     '''
@@ -212,15 +229,19 @@ def get_base(date):
     df.cache()
     return df
 
+
 def add_columns():
     df = spark.sql('''
     SELECT
         *
     FROM
         base
-        LEFT JOIN t2 ON base.id = t2.id
+    LEFT JOIN
+        t2
+        ON base.id = t2.id
     ''')
     return df
+
 
 def final():
     columns = ['id', 'date', 'c1', 'c2']
