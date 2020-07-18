@@ -1,5 +1,5 @@
 # pyspark-sql-formatter
-A formatter for Pyspark code with SQL queries. It relies on Python formatter [yapf](https://github.com/google/yapf) and HiveQL formatter [sparksqlformatter](https://github.com/largecats/sparksql-formatter), both working indepdendently. User can specify configurations for either language separately.
+A formatter for Pyspark code with SQL queries. It relies on Python formatter [yapf](https://github.com/google/yapf) and SparkSQL formatter [sparksqlformatter](https://github.com/largecats/sparksql-formatter), both working indepdendently. User can specify configurations for either formatter separately.
 
 - [pyspark-sql-formatter](#pyspark-sql-formatter)
 - [Installation](#installation)
@@ -46,11 +46,11 @@ optional arguments:
                         Paths to files to format.
   -i, --in-place        Format the files in place.
   --query-names QUERY_NAMES [QUERY_NAMES ...]
-                        Strings contained by variable names of queries to format. Default to 'query'.
+                        String variables with names containing these strings will be formatted. Default to 'query'.
   --python-style PYTHON_STYLE
                         Style for Python formatting, interface to https://github.com/google/yapf.
   --sparksql-config SPARKSQL_CONFIG
-                        Configurations for the query language, interface to https://github.com/largecats/sparksql-formatter.
+                        Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
 ```
 E.g.,
 ```
@@ -68,12 +68,12 @@ Call `pysqlformatter.api.format_script()` to format script passed as string:
 ```
 >>> from pysqlformatter import api
 >>> script = '''query = 'select * from t0'\nspark.sql(query)'''
->>> api.format_script(script)
+>>> api.format_script(script=script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query'])
 "query = '''\nSELECT\n    *\nFROM\n    t0\n'''\nspark.sql(query)\n"
 ```
 Call `pysqlformatter.api.format_file()` to format script in file:
 ```
 >>> from pysqlformatter import api
->>> api.format_file(<path_to_file>, inPlace=False)
+>>> api.format_file(filePath=<path_to_file>, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query'], inPlace=False)
 ...
 ```

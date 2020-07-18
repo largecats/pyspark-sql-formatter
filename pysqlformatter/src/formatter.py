@@ -40,16 +40,13 @@ class Formatter:
         '''
         formattedScript = ''
         for token in tokens:
-            print('token.type = ' + token.type)
-            print('token.value = ' + token.value)
             formattedScript += script[self.pointer:token.start]
             formattedQuery = api.format_query(token.value,
                                               self.sparksqlConfig)  # will get rid of starting/trailling blank spaces
 
             formattedQuery = Formatter.indent_query(formattedQuery, token.indent)
             if not script[(token.start - 3):token.start] in [
-                    "'''",
-                    '"""'
+                    "'''", '"""'
             ]:  # handle queries quoted by '' or "" that are formatted to multiline
                 if '\n' in formattedQuery:
                     formattedScript = formattedScript[:-1] + "'''\n"  # remove starting ' or "

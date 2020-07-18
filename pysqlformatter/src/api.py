@@ -13,7 +13,7 @@ log_formatter = '[%(asctime)s] %(levelname)s [%(filePath)s:%(lineno)s:%(funcName
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
 
-def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), inPlace=False):
+def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query'], inPlace=False):
     '''
     Format file with given settings for python style and sparksql configurations.
 
@@ -37,13 +37,15 @@ def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), i
             if sparksqlConfig.startswith('{'):
                 sparksqlConfig = eval(sparksqlConfig)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig))
+                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                      queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
                                       sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig))
         elif type(sparksqlConfig) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig))
+                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                  queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
     _format_file(filePath, formatter, inPlace)

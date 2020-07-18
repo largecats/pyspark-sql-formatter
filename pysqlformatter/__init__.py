@@ -82,12 +82,6 @@ def get_arguments(argv):
 
     parser.add_argument('-i', '--in-place', action='store_true', help='Format the files in place.')
 
-    parser.add_argument('--query-names',
-                        type=str,
-                        default=['query'],
-                        nargs='+',
-                        help="Strings contained by variable names of queries to format. Default to 'query'.")
-
     parser.add_argument('--python-style',
                         type=str,
                         default=None,
@@ -97,7 +91,14 @@ def get_arguments(argv):
         '--sparksql-config',
         type=str,
         default=None,
-        help="Configurations for the query language, interface to https://github.com/largecats/sparksql-formatter.")
+        help="Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.")
+
+    parser.add_argument(
+        '--query-names',
+        type=str,
+        default=['query'],
+        nargs='+',
+        help="String variables with names containing these strings will be formatted. Default to 'query'.")
 
     args = vars(parser.parse_args(argv[1:]))
 
