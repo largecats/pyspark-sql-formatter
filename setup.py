@@ -5,10 +5,10 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pysqlformatter-largecats',  # Replace with your own username
-    version='0.0.11',
+    version='0.0.12',
     author='largecats',
     author_email='linfanxiaolinda@outlook.com',
-    description='A formatter for Pyspark code with SQL queries.',
+    description='A formatter for Python code and SparkSQL queries.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/largecats/pyspark-sql-formatter',
