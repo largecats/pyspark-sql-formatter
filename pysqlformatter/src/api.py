@@ -5,7 +5,7 @@ import re
 import logging
 
 from pysqlformatter.src.formatter import Formatter
-from sparksqlformatter import Config as sparksqlConfig
+from sparksqlformatter import Style as sparksqlStyle
 from sparksqlformatter import api as sparksqlAPI
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ log_formatter = '[%(asctime)s] %(levelname)s [%(filePath)s:%(lineno)s:%(funcName
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
 
-def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query'], inPlace=False):
+def format_file(filePath, pythonStyle='pep8', sparksqlStyle=sparksqlStyle(), queryNames=['query'], inPlace=False):
     '''
     Format file with given settings for python style and sparksql configurations.
 
@@ -22,36 +22,38 @@ def format_file(filePath, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), q
         Path to the file to format.
     pythonStyle: string
         A style name or path to a style config file; interface to https://github.com/google/yapf.
-    sparksqlConfig: string, dict, or sparksqlformatter.src.config.Config() object
+    sparksqlStyle: string, dict, or sparksqlformatter.src.style.Style() object
         Configurations for the query language; interface to https://github.com/largecats/sparksql-formatter.
+    queryNames: list
+
     inPlace: bool
         If True, will format the file in place.
         Else, will write the formatted file to stdout.
 
     Return: None
     '''
-    if type(sparksqlConfig) == type(sparksqlConfig):
-        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig)
+    if type(sparksqlStyle) == type(sparksqlStyle):
+        formatter = Formatter(pythonStyle=pythonStyle, sparksqlStyle=sparksqlStyle)
     else:
-        if type(sparksqlConfig) == str:
-            if sparksqlConfig.startswith('{'):
-                sparksqlConfig = eval(sparksqlConfig)
+        if type(sparksqlStyle) == str:
+            if sparksqlStyle.startswith('{'):
+                sparksqlStyle = eval(sparksqlStyle)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                      sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
                                       queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig))
-        elif type(sparksqlConfig) == dict:
+                                      sparksqlStyle=sparksqlAPI._create_config_from_file(sparksqlStyle))
+        elif type(sparksqlStyle) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                  sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
                                   queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
     _format_file(filePath, formatter, inPlace)
 
 
-def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), queryNames=['query']):
+def format_script(script, pythonStyle='pep8', sparksqlStyle=sparksqlStyle(), queryNames=['query']):
     '''
     Format script using given settings for python style and sparksql configurations.
 
@@ -60,28 +62,28 @@ def format_script(script, pythonStyle='pep8', sparksqlConfig=sparksqlConfig(), q
         The script to be formatted.
     pythonStyle: string
         A style name or path to a style config file; interface to https://github.com/google/yapf.
-    sparksqlConfig: string, dict, or sparksqlformatter.src.config.Config() object
+    sparksqlStyle: string, dict, or sparksqlformatter.src.style.Style() object
         Configurations for the query language; interface to https://github.com/largecats/sparksql-formatter.
     
     Return: string
         The formatted script.
     '''
-    if type(sparksqlConfig) == type(sparksqlConfig):
-        formatter = Formatter(pythonStyle=pythonStyle, sparksqlConfig=sparksqlConfig, queryNames=queryNames)
+    if type(sparksqlStyle) == type(sparksqlStyle):
+        formatter = Formatter(pythonStyle=pythonStyle, sparksqlStyle=sparksqlStyle, queryNames=queryNames)
     else:
-        if type(sparksqlConfig) == str:
-            if sparksqlConfig.startswith('{'):
-                sparksqlConfig = eval(sparksqlConfig)
+        if type(sparksqlStyle) == str:
+            if sparksqlStyle.startswith('{'):
+                sparksqlStyle = eval(sparksqlStyle)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                      sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
                                       queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlConfig=sparksqlAPI._create_config_from_file(sparksqlConfig),
+                                      sparksqlStyle=sparksqlAPI._create_config_from_file(sparksqlStyle),
                                       queryNames=queryNames)
-        elif type(sparksqlConfig) == dict:
+        elif type(sparksqlStyle) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  sparksqlConfig=sparksqlAPI._create_config_from_dict(sparksqlConfig),
+                                  sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
                                   queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')

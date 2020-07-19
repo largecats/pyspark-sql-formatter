@@ -1,24 +1,25 @@
 from __future__ import print_function  # for print() in Python 2
 import re
 from yapf.yapflib import yapf_api
-from sparksqlformatter import Config, api
+from sparksqlformatter import Style
+from sparksqlformatter import api as sparksqlformatter_api
 from pysqlformatter.src.tokenizer import Tokenizer
 
 
 class Formatter:
     '''
-    Format a script with Python code and Spark SQL, HiveQL queries.
+    Format a script with Python code and SparkSQL queries.
     '''
-    def __init__(self, pythonStyle='pep8', sparksqlConfig=Config(), queryNames=['query']):
+    def __init__(self, pythonStyle='pep8', sparksqlStyle=Style(), queryNames=['query']):
         '''
         Parameters
         pythonStyle: string
             A style name or path to a style config file; interface to https://github.com/google/yapf.
-        sparksqlConfig: string, dict, or sparksqlformatter.src.config.Config() object
+        sparksqlStyle: string, dict, or sparksqlformatter.src.style.Style() object
             Configurations for the query language; interface to https://github.com/largecats/sparksql-formatter.
         '''
         self.pythonStyle = pythonStyle
-        self.sparksqlConfig = sparksqlConfig
+        self.sparksqlStyle = sparksqlStyle
         self.pointer = 0  # next position to read
         self.tokenizer = Tokenizer(queryNames=queryNames)
 
@@ -41,8 +42,8 @@ class Formatter:
         formattedScript = ''
         for token in tokens:
             formattedScript += script[self.pointer:token.start]
-            formattedQuery = api.format_query(token.value,
-                                              self.sparksqlConfig)  # will get rid of starting/trailling blank spaces
+            formattedQuery = sparksqlformatter_api.format_query(
+                token.value, self.sparksqlStyle)  # will get rid of starting/trailling blank spaces
 
             formattedQuery = Formatter.indent_query(formattedQuery, token.indent)
             if not script[(token.start - 3):token.start] in [

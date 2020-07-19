@@ -30,8 +30,6 @@ import codecs
 import json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sparksqlformatter.src import sparksql_config as hc
-from sparksqlformatter import Config
 from pysqlformatter.src import api
 from pysqlformatter.src.formatter import Formatter
 
@@ -43,19 +41,19 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 def main(argv):
     args = get_arguments(argv)
     pythonStyle = args['python_style']
-    sparksqlConfig = args['sparksql_config']
+    sparksqlStyle = args['sparksql_config']
     filePaths = args['files']
     if filePaths:
-        if sparksqlConfig:
+        if sparksqlStyle:
             if pythonStyle:
                 for filePath in filePaths:
                     api.format_file(filePath=filePath,
                                     pythonStyle=pythonStyle,
-                                    sparksqlConfig=sparksqlConfig,
+                                    sparksqlStyle=sparksqlStyle,
                                     inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, sparksqlConfig=sparksqlConfig, inPlace=args.get('in_place'))
+                    api.format_file(filePath=filePath, sparksqlStyle=sparksqlStyle, inPlace=args.get('in_place'))
         else:
             if pythonStyle:
                 for filePath in filePaths:
@@ -88,10 +86,11 @@ def get_arguments(argv):
                         help='Style for Python formatting, interface to https://github.com/google/yapf.')
 
     parser.add_argument(
-        '--sparksql-config',
+        '--sparksql-style',
         type=str,
         default=None,
-        help="Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.")
+        help=
+        "Style configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.")
 
     parser.add_argument(
         '--query-names',
