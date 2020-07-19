@@ -45,20 +45,20 @@ optional arguments:
   -f FILES [FILES ...], --files FILES [FILES ...]
                         Paths to files to format.
   -i, --in-place        Format the files in place.
-  --query-names QUERY_NAMES [QUERY_NAMES ...]
-                        String variables with names containing these strings will be formatted. Default to 'query'.
   --python-style PYTHON_STYLE
                         Style for Python formatting, interface to https://github.com/google/yapf.
   --sparksql-config SPARKSQL_CONFIG
                         Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
+  --query-names QUERY_NAMES [QUERY_NAMES ...]
+                        String variables with names containing these strings will be formatted. Default to 'query'.
 ```
 E.g.,
 ```
-$ pysqlformatter --python-style='pep8' --sparksql-config="{'reservedKeywordUppercase': False}" -f <path_to_file>
+$ pysqlformatter -f <path_to_file> --python-style='pep8' --sparksql-config="{'reservedKeywordUppercase': False}" --query-names query
 ```
 Or using config files:
 ```
-$ pysqlformatter --python-style="<path_to_python_style_config_file>" --sparksql-config="<path_to_sparksql_config_file>" -f <path_to_file>
+$ pysqlformatter -f <path_to_file> --python-style="<path_to_python_style_config_file>" --sparksql-config="<path_to_sparksql_config_file>" --query-names query
 ```
 
 ## Use as Python library
