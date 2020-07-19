@@ -41,7 +41,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 def main(argv):
     args = get_arguments(argv)
     pythonStyle = args['python_style']
-    sparksqlStyle = args['sparksql_config']
+    sparksqlStyle = args['sparksql_style']
     filePaths = args['files']
     if filePaths:
         if sparksqlStyle:
