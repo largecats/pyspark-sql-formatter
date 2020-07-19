@@ -43,6 +43,7 @@ def main(argv):
     pythonStyle = args['python_style']
     sparksqlStyle = args['sparksql_style']
     filePaths = args['files']
+    queryNames = args['query_names']
     if filePaths:
         if sparksqlStyle:
             if pythonStyle:
@@ -50,17 +51,24 @@ def main(argv):
                     api.format_file(filePath=filePath,
                                     pythonStyle=pythonStyle,
                                     sparksqlStyle=sparksqlStyle,
+                                    queryNames=queryNames,
                                     inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, sparksqlStyle=sparksqlStyle, inPlace=args.get('in_place'))
+                    api.format_file(filePath=filePath,
+                                    sparksqlStyle=sparksqlStyle,
+                                    queryNames=queryNames,
+                                    inPlace=args.get('in_place'))
         else:
             if pythonStyle:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, pythonStyle=pythonStyle, inPlace=args.get('in_place'))
+                    api.format_file(filePath=filePath,
+                                    pythonStyle=pythonStyle,
+                                    queryNames=queryNames,
+                                    inPlace=args.get('in_place'))
             else:
                 for filePath in filePaths:
-                    api.format_file(filePath=filePath, inPlace=args.get('in_place'))
+                    api.format_file(filePath=filePath, queryNames=queryNames, inPlace=args.get('in_place'))
 
 
 def get_arguments(argv):
