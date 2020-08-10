@@ -97,8 +97,7 @@ def get_arguments(argv):
         '--sparksql-style',
         type=str,
         default=None,
-        help=
-        "Style configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.")
+        help="Style for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.")
 
     parser.add_argument(
         '--query-names',

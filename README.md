@@ -42,7 +42,7 @@ optional arguments:
   --python-style PYTHON_STYLE
                         Style for Python formatting, interface to https://github.com/google/yapf.
   --sparksql-style SPARKSQL_CONFIG
-                        Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
+                        Style for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
   --query-names QUERY_NAMES [QUERY_NAMES ...]
                         String variables with names containing these strings will be formatted as SQL queries. Default to 'query'.
 ```
