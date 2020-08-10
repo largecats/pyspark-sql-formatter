@@ -30,7 +30,7 @@ Supports Python 2.7 and 3.6+.
 
 ## Use as command-line tool
 ```
-usage: pysqlformatter [-h] [-f FILES [FILES ...]] [-i] [--query-names QUERY_NAMES [QUERY_NAMES ...]] [--python-style PYTHON_STYLE] [--sparksql-config SPARKSQL_CONFIG]
+usage: pysqlformatter [-h] [-f FILES [FILES ...]] [-i] [--query-names QUERY_NAMES [QUERY_NAMES ...]] [--python-style PYTHON_STYLE] [--sparksql-style SPARKSQL_CONFIG]
 
 Formatter for Pyspark code and SparkSQL queries.
 
@@ -41,18 +41,18 @@ optional arguments:
   -i, --in-place        Format the files in place.
   --python-style PYTHON_STYLE
                         Style for Python formatting, interface to https://github.com/google/yapf.
-  --sparksql-config SPARKSQL_CONFIG
+  --sparksql-style SPARKSQL_CONFIG
                         Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
   --query-names QUERY_NAMES [QUERY_NAMES ...]
                         String variables with names containing these strings will be formatted as SQL queries. Default to 'query'.
 ```
 E.g.,
 ```
-$ pysqlformatter -f <path_to_file> --python-style='pep8' --sparksql-config="{'reservedKeywordUppercase': False}" --query-names query
+$ pysqlformatter -f <path_to_file> --python-style='pep8' --sparksql-style="{'reservedKeywordUppercase': False}" --query-names query
 ```
 Or using config files:
 ```
-$ pysqlformatter -f <path_to_file> --python-style="<path_to_python_style_config_file>" --sparksql-config="<path_to_sparksql_config_file>" --query-names query
+$ pysqlformatter -f <path_to_file> --python-style="<path_to_python_style_config_file>" --sparksql-style="<path_to_sparksql_config_file>" --query-names query
 ```
 
 ## Use as Python library
