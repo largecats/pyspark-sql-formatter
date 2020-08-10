@@ -13,20 +13,14 @@ A formatter for Pyspark code with SQL queries. It relies on Python formatter [ya
 # Installation
 
 ## Install using pip
-View package at https://test.pypi.org/project/pysqlformatter-largecats.
-```
-python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps pysqlformatter-largecats
-```
-TBD:
 ```
 pip install pysqlformatter
 ```
 
 ## Install from source
-See [here](https://docs.python.org/2/install/index.html#splitting-the-job-up).
-```
-python setup.py install
-```
+1. Download source code.
+2. Navigate to the source code directory.
+3. Do `python setup.py install` or `pip install .`.
 
 # Compatibility
 Supports Python 2.7 and 3.6+.
@@ -50,7 +44,7 @@ optional arguments:
   --sparksql-style SPARKSQL_CONFIG
                         Configurations for SparkSQL formatting, interface to https://github.com/largecats/sparksql-formatter.
   --query-names QUERY_NAMES [QUERY_NAMES ...]
-                        String variables with names containing these strings will be formatted. Default to 'query'.
+                        String variables with names containing these strings will be formatted as SQL queries. Default to 'query'.
 ```
 E.g.,
 ```
@@ -62,7 +56,6 @@ $ pysqlformatter -f <path_to_file> --python-style="<path_to_python_style_config_
 ```
 
 ## Use as Python library
-The module can also be used as a Python library.
 
 Call `pysqlformatter.api.format_script()` to format script passed as string:
 ```

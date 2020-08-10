@@ -105,7 +105,8 @@ def get_arguments(argv):
         type=str,
         default=['query'],
         nargs='+',
-        help="String variables with names containing these strings will be formatted. Default to 'query'.")
+        help="String variables with names containing these strings will be formatted as SQL queries. Default to 'query'."
+    )
 
     args = vars(parser.parse_args(argv[1:]))
 
