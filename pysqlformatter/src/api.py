@@ -1,4 +1,4 @@
-from __future__ import print_function  # for print() in Python 2
+# from __future__ import print_function  # for print() in Python 2
 from io import open
 import sys
 import re
@@ -39,14 +39,14 @@ def format_file(filePath, pythonStyle='pep8', sparksqlStyle=sparksqlStyle(), que
             if sparksqlStyle.startswith('{'):
                 sparksqlStyle = eval(sparksqlStyle)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
+                                      sparksqlStyle=sparksqlAPI._create_style_from_dict(sparksqlStyle),
                                       queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlStyle=sparksqlAPI._create_config_from_file(sparksqlStyle))
+                                      sparksqlStyle=sparksqlAPI._create_style_from_file(sparksqlStyle))
         elif type(sparksqlStyle) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
+                                  sparksqlStyle=sparksqlAPI._create_style_from_dict(sparksqlStyle),
                                   queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')
@@ -75,15 +75,15 @@ def format_script(script, pythonStyle='pep8', sparksqlStyle=sparksqlStyle(), que
             if sparksqlStyle.startswith('{'):
                 sparksqlStyle = eval(sparksqlStyle)
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
+                                      sparksqlStyle=sparksqlAPI._create_style_from_dict(sparksqlStyle),
                                       queryNames=queryNames)
             else:
                 formatter = Formatter(pythonStyle=pythonStyle,
-                                      sparksqlStyle=sparksqlAPI._create_config_from_file(sparksqlStyle),
+                                      sparksqlStyle=sparksqlAPI._create_style_from_file(sparksqlStyle),
                                       queryNames=queryNames)
         elif type(sparksqlStyle) == dict:
             formatter = Formatter(pythonStyle=pythonStyle,
-                                  sparksqlStyle=sparksqlAPI._create_config_from_dict(sparksqlStyle),
+                                  sparksqlStyle=sparksqlAPI._create_style_from_dict(sparksqlStyle),
                                   queryNames=queryNames)
         else:
             raise Exception('Unsupported config type')

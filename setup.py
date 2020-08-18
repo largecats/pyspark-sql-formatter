@@ -4,7 +4,7 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(name='pysqlformatter',
-                 version='0.0.1',
+                 version='0.0.3',
                  author='largecats',
                  author_email='linfanxiaolinda@outlook.com',
                  description='A formatter for Python code and SparkSQL queries.',
@@ -12,7 +12,7 @@ setuptools.setup(name='pysqlformatter',
                  long_description_content_type='text/markdown',
                  url='https://github.com/largecats/pyspark-sql-formatter',
                  packages=setuptools.find_packages(),
-                 install_requires=['yapf', 'sparksqlformatter'],
+                 install_requires=['yapf', 'sparksqlformatter', 'configparser'],
                  classifiers=[
                      'Programming Language :: Python',
                      'Programming Language :: Python :: 2',
