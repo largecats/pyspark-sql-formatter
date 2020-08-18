@@ -1,4 +1,4 @@
-from __future__ import print_function  # for print() in Python 2
+# from __future__ import print_function  # for print() in Python 2
 from io import open
 import sys
 import re
