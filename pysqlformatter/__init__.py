@@ -24,7 +24,6 @@ from __future__ import print_function  # for print() in Python 2
 import os
 import sys
 import argparse
-import configparser
 import logging
 import codecs
 import json
