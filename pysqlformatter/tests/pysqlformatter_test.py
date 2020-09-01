@@ -273,6 +273,18 @@ def foo():
         """.strip() + '\n'  # pep8
         self.run(msg, testScript, key)
 
+    def test_script_with_single_line_query(self):
+        msg = 'Testing script with single line query'
+        testScript = """
+def foo():
+    dropQuery = 'drop table xxx'
+        """
+        key = """
+def foo():
+    dropQuery = 'DROP TABLE xxx'
+        """.strip() + '\n'  # pep8
+        self.run(msg, testScript, key)
+
     def run(self, msg, testScript, key):
         logger.info(msg)
         logger.info('testScript =')

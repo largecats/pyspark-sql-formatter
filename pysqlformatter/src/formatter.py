@@ -48,14 +48,14 @@ class Formatter:
             formattedQuery = Formatter.indent_query(formattedQuery, token.indent)
             if not script[(token.start - 3):token.start] in [
                     "'''", '"""'
-            ]:  # handle queries quoted by '' or "" that are formatted to multiline
-                if '\n' in formattedQuery:
-                    formattedScript = formattedScript[:-1] + "'''\n"  # remove starting ' or "
+            ]:  # handle queries quoted by '' or "" that are possibly formatted to multiline
+                if '\n' in formattedQuery:  # if query is multiline
+                    formattedScript = formattedScript[:-1] + "'''\n"  # remove starting ' or " and replace with triple single quotes
                     formattedScript += formattedQuery
-                    formattedScript += '\n' + token.indent + "'''"
-                    self.pointer = token.end + 1  # skip ending ' or "
-                else:
-                    formattedScript += formattedQuery
+                    formattedScript += '\n' + token.indent + "'''"  # add ending triple quotes on a separate line
+                    self.pointer = token.end + 1  # skip pointer over ending ' or "
+                else:  # if query is single line
+                    formattedScript += formattedQuery.lstrip()  # remove added indent
                     self.pointer = token.end
             else:
                 formattedScript += '\n' + formattedQuery + '\n' + token.indent  # properly format between triple quotes
