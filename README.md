@@ -1,6 +1,8 @@
 # pyspark-sql-formatter
 A formatter for Pyspark code with SQL queries. It relies on Python formatter [yapf](https://github.com/google/yapf) and SparkSQL formatter [sparksqlformatter](https://github.com/largecats/sparksql-formatter), both working indepdendently. User can specify configurations for either formatter separately.
 
+The queries should be in the form `spark.sql(query)` or `spark.sql('xxx')`. Cases like `spark.sql('xxx'.format())`, `spark.sql('xxx'.replace())` may raise Exceptions.
+
 - [pyspark-sql-formatter](#pyspark-sql-formatter)
 - [Installation](#installation)
   - [Install using pip](#install-using-pip)

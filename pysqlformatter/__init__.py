@@ -81,7 +81,10 @@ def get_arguments(argv):
     Returns: dict
         A dictionary containing arguments for the formatter.
     '''
-    parser = argparse.ArgumentParser(description='Formatter for Pyspark code and SparkSQL queries.')
+    parser = argparse.ArgumentParser(
+        description=
+        "Formatter for Pyspark code and SparkSQL queries. The queries should be in the form spark.sql(query) or spark.sql('xxx'). Cases like spark.sql('xxx'.format()), spark.sql('xxx'.replace()) may raise Exceptions."
+    )
 
     parser.add_argument('-f', '--files', type=str, nargs='+', help='Paths to files to format.')
 
