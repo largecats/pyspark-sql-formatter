@@ -8,3 +8,6 @@
 
 ## 2020-09-01
 1. Remove extraneous blanks in front of query when formatting single-line query.
+
+## 2021-06-24
+1. Added version requirement for sparksqlformatter package.
