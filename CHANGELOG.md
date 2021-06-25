@@ -11,3 +11,7 @@
 
 ## 2021-06-24
 1. Added version requirement for sparksqlformatter package.
+
+## 2021-06-25
+1. Updated version requirement for sparksqlformatter package.
+2. Updated tests to use unittest library.
