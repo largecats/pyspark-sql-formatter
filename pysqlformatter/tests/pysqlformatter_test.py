@@ -1,3 +1,4 @@
+import unittest
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -10,10 +11,7 @@ log_formatter = '[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s:%(funcName
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=log_formatter)
 
 
-class Test:
-    def __init__(self):
-        pass
-
+class Test(unittest.TestCase):
     def test_script_with_simple_query_as_variable(self):
         msg = 'Testing script with simple query as variable passed to spark.sql()'
         testScript = """
@@ -29,7 +27,8 @@ FROM
 '''
 df = spark.sql(query)
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_simple_query_as_argument(self):
         msg = 'Testing script with simple query in spark.sql()'
@@ -44,7 +43,8 @@ FROM
     t0
 ''')
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_complex_query_as_variable1(self):
         msg = 'Testing script with complex query in spark.sql()'
@@ -112,7 +112,8 @@ def final():
     df = df.select(columns)
     return df
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_complex_query_as_variable_currLineIndent_less_than_prevLineIndent(self):
         msg = 'Testing script with complex query in spark.sql(), with currLineIndent < prevLineIndent'
@@ -180,7 +181,8 @@ def final():
     df = df.select(columns)
     return df
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_complex_query_as_variable_currLineIndent_greater_than_prevLineIndent(self):
         msg = 'Testing script with complex query in spark.sql(), with currLineIndent > prevLineIndent'
@@ -248,7 +250,8 @@ def final():
     df = df.select(columns)
     return df
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_query_starting_with_comment(self):
         msg = 'Testing script with query that starts with line comment'
@@ -271,7 +274,8 @@ def foo():
     '''
     return spark.sql(query)
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
+        formattedScript = api.format_script(testScript)
+        self.assertEqual(formattedScript, key)
 
     def test_script_with_single_line_query(self):
         msg = 'Testing script with single line query'
@@ -283,28 +287,9 @@ def foo():
 def foo():
     dropQuery = 'DROP TABLE xxx'
         """.strip() + '\n'  # pep8
-        self.run(msg, testScript, key)
-
-    def run(self, msg, testScript, key):
-        logger.info(msg)
-        logger.info('testScript =')
-        logger.info(testScript)
-        logger.info(repr(testScript))
         formattedScript = api.format_script(testScript)
-        logger.info('formattedScript =')
-        logger.info(formattedScript)
-        logger.info(repr(formattedScript))
-        logger.info('key =')
-        logger.info(key)
-        logger.info(repr(key))
-        assert formattedScript == key
-        return True
-
-    def run_all(self):
-        tests = list(filter(lambda m: m.startswith('test_'), dir(self)))
-        for test in tests:
-            getattr(self, test)()
+        self.assertEqual(formattedScript, key)
 
 
-if __name__ == "__main__":
-    Test().run_all()
+if __name__ == '__main__':
+    unittest.main()
